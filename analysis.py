@@ -39,10 +39,11 @@ stdPlayTime.head()
 # ### Question 5: Find top 5 users in terms of total playtime and the game ###
 
 # %%
-topFivePlayTime = data[data["Behavior"] == "play"].groupby("UserID")["Hours"].sum().sort_values(ascending=False).head(5)
+totalPlayTime = data[data["Behavior"] == "play"].groupby("UserID")["Hours"].sum()
+sortedData = totalPlayTime.sort_values(ascending=False).head(5)
 
 res = {}
-for user_id in topFivePlayTime.index:
+for user_id in sortedData.index:
     user_games = data[(data["UserID"] == user_id) & (data["Behavior"] == "play")]
     most_played_game = user_games.sort_values(by="Hours", ascending=False).iloc[0]["Game"]
     res[user_id] = most_played_game
@@ -61,12 +62,21 @@ topTenGames
 
 # %%
 sb.set(style = "whitegrid")
-plt.figure(figsize = (10,6))
+plt.figure(figsize = (5,4))
 sb.barplot(x = topTenGames.values, y = topTenGames.index, palette="viridis")
 plt.title('Top 10 Most Popular Games by Unique Users')
-plt.xlabel('Number of Unique Users')
-plt.ylabel('Games')
 plt.show()
 
+
+# %% [markdown]
+# ### Question 8: Percentage of top 10 games purchase
+
+# %%
+purchases = data[data["Behavior"] == "purchase"].groupby("Game")["UserID"].nunique().sort_values(ascending=False).head(10)
+
+plt.figure(figsize=(5,4))
+plt.pie(purchases, labels=purchases.index, autopct='%1.1f%%')
+plt.axis('equal')
+plt.show()
 
 
